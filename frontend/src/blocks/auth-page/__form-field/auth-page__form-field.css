@@ -1,0 +1,29 @@
+.auth-page__form-field {
+    transition: all .3s linear;
+    margin-bottom: 30px;
+    border: none;
+    border-bottom: 2px solid #CCCCCC;
+    background-color: transparent;
+    padding: 0 0 13px;
+    width: 100%;
+    line-height: 17px;
+    color: #CCCCCC;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.auth-page__form-field:focus {
+    outline: none;
+    border-color: #FFFFFF;
+    color: #FFFFFF;
+}
+
+.auth-page__form-field:last-of-type {
+    margin-bottom: 216px;
+}
+
+@media screen and (max-width: 480px) {
+    .auth-page__form-field:last-of-type {
+        margin-bottom: 173px;
+    }
+}

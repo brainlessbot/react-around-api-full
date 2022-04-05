@@ -1,0 +1,7 @@
+.card__details-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #FFFFFF;
+    padding: 22px 15px 22px 21px;
+}

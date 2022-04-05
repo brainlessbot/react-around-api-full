@@ -1,0 +1,11 @@
+.header__content {
+    display: flex;
+    grid-area: content;
+    gap: 24px;
+}
+
+@media screen and (max-width: 960px) {
+    .header__content {
+        margin-right: 30px;
+    }
+}

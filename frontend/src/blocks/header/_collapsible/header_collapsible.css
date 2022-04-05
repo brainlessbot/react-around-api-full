@@ -1,0 +1,7 @@
+@media screen and (max-width: 960px) {
+    .header_collapsible {
+        grid-template-areas:
+            'content content'
+            'logo button';
+    }
+}

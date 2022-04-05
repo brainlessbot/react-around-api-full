@@ -1,0 +1,11 @@
+@media screen and (max-width: 960px) {
+    .header__content_collapsible {
+        flex-direction: column;
+        gap: 18px;
+        align-items: center;
+        justify-content: center;
+        margin: 0 0 28px;
+        border-bottom: 1px solid #545454;
+        padding: 12px 30px 40px;
+    }
+}

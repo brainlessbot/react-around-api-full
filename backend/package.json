@@ -1,0 +1,33 @@
+{
+  "name": "around-express",
+  "version": "1.0.0",
+  "description": "The backend of Around the U.S.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "lint": "npx eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brainlessbot/around-express.git"
+  },
+  "keywords": [],
+  "author": "Michael Becker",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brainlessbot/around-express/issues"
+  },
+  "homepage": "https://github.com/brainlessbot/around-express",
+  "dependencies": {
+    "body-parser": "^1.19.2",
+    "express": "^4.17.3",
+    "mongoose": "^6.2.5"
+  },
+  "devDependencies": {
+    "eslint": "^8.9.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.4",
+    "nodemon": "^2.0.15"
+  }
+}

@@ -1,0 +1,19 @@
+.auth-page__link {
+    transition: all .3s linear;
+    text-decoration: none;
+    line-height: 17px;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.auth-page__link:hover {
+    opacity: .8;
+}
+
+@media screen and (max-width: 480px) {
+    .auth-page__link {
+        line-height: 15px;
+        font-size: 12px;
+    }
+}

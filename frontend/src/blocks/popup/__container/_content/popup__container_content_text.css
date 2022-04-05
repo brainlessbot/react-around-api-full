@@ -1,0 +1,9 @@
+.popup__container_content_text {
+    box-sizing: border-box;
+    border-radius: 10px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, .15);
+    background-color: #FFFFFF;
+    padding: 60px 36px;
+    width: 430px;
+    text-align: center;
+}

@@ -1,0 +1,18 @@
+.header__text {
+    text-decoration: none;
+    line-height: 22px;
+    color: #FFFFFF;
+    font-size: 18px;
+    font-weight: normal;
+}
+
+a.header__text:hover {
+    opacity: .8;
+}
+
+@media screen and (max-width: 960px) {
+    .header__text {
+        line-height: 17px;
+        font-size: 14px;
+    }
+}

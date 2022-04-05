@@ -1,0 +1,4 @@
+.header__button_active {
+    background-image: url('../../../../images/icon-close.svg');
+    background-size: 42px 42px;
+}
