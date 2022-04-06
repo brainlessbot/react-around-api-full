@@ -5,13 +5,10 @@ const cardRoutes = require('./cards');
 const userRoutes = require('./users');
 const ResourceNotFoundError = require('../errors/ResourceNotFoundError');
 const authMiddleware = require('../middlewares/auth');
-const corsMiddleware = require('../middlewares/cors');
 const { requestLogger, errorLogger } = require('../middlewares/logger');
 const errorHandler = require('../utils/error-handler');
 
 router.use(requestLogger);
-
-router.use(corsMiddleware);
 
 // TEMPORARY
 router.get('/crash-test', () => {
