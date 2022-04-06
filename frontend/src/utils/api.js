@@ -1,4 +1,4 @@
-import {apiBaseUrl, apiAuthKey} from './constants';
+import {baseUrl} from './constants';
 
 class Api {
     /**
@@ -6,13 +6,54 @@ class Api {
      *
      * @constructor
      * @param {string} baseUrl
-     * @param {string} authKey
      * @return {void}
      * @public
      */
-    constructor(baseUrl, authKey) {
+    constructor(baseUrl) {
         this._baseUrl = baseUrl;
-        this._authKey = authKey;
+        this._authToken = undefined;
+    }
+
+    /**
+     * Register a new user.
+     *
+     * @param {string} email
+     * @param {string} password
+     * @return {Promise}
+     * @public
+     */
+    register({email, password}) {
+        return this._sendRequest('POST', '/signup', {
+            body: JSON.stringify({email, password})
+        });
+    }
+
+    /**
+     * Login an existing user.
+     *
+     * @param {string} email
+     * @param {string} password
+     * @return {Promise}
+     * @public
+     */
+    login({email, password}) {
+        return this._sendRequest('POST', '/signin', {
+            body: JSON.stringify({email, password})
+        }).then((response) => {
+            this._setAuthToken(response.token);
+            this._setJwtToken(response.token);
+            return response;
+        });
+    }
+
+    /**
+     * Logout a user.
+     *
+     * @return {void}
+     * @public
+     */
+    logout() {
+        this._removeJwtToken();
     }
 
     /**
@@ -58,7 +99,7 @@ class Api {
      * @public
      */
     likeCard(id) {
-        return this._sendRequest('PUT', '/cards/likes/' + id);
+        return this._sendRequest('PUT', '/cards/' + id + '/likes');
     }
 
     /**
@@ -69,16 +110,18 @@ class Api {
      * @public
      */
     dislikeCard(id) {
-        return this._sendRequest('DELETE', '/cards/likes/' + id);
+        return this._sendRequest('DELETE', '/cards/' + id + '/likes');
     }
 
     /**
-     * Get user's information.
+     * Get user's information by token.
      *
+     * @param {string} token
      * @return {Promise}
      * @public
      */
-    getUserInfo() {
+    getUserInfo(token) {
+        this._setAuthToken(token);
         return this._sendRequest('GET', '/users/me');
     }
 
@@ -122,7 +165,7 @@ class Api {
         return fetch(this._baseUrl + targetUrl, {
             method,
             headers: {
-                'Authorization': this._authKey,
+                'Authorization': this._authToken,
                 'Content-Type': 'application/json'
             },
             ...options
@@ -143,6 +186,38 @@ class Api {
 
         return Promise.reject(`An error occurred: ${response.status} ${response.statusText}`);
     }
+
+    /**
+     * Set user's auth token.
+     *
+     * @param {string} token
+     * @return {void}
+     * @private
+     */
+    _setAuthToken(token) {
+        this._authToken = `Bearer ${token}`;
+    }
+
+    /**
+     * Save user's token in local storage.
+     *
+     * @param {string} token
+     * @return {Promise}
+     * @private
+     */
+    _setJwtToken(token) {
+        localStorage.setItem('jwt', token);
+    }
+
+    /**
+     * Remove user's token from local storage.
+     *
+     * @return {void}
+     * @private
+     */
+    _removeJwtToken() {
+        localStorage.removeItem('jwt');
+    }
 }
 
-export default new Api(apiBaseUrl, apiAuthKey);
+export default new Api(baseUrl);

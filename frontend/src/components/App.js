@@ -15,7 +15,6 @@ import ErrorPopup from './ErrorPopup';
 import InfoTooltip from './InfoTooltip';
 import CurrentUserContext from '../contexts/CurrentUserContext';
 import api from '../utils/api';
-import auth from '../utils/auth';
 
 /**
  * Represent application's entry component.
@@ -29,9 +28,6 @@ const App = () => {
     // Initialize API-data states
     const [userData, setUserData] = React.useState({});
     const [cardsData, setCardsData] = React.useState([]);
-
-    // Initialize auth states
-    const [loggedUser, setLoggedUser] = React.useState({});
     const [isLoggedIn, setIsLoggedIn] = React.useState(false);
 
     // Initialize loading state
@@ -72,6 +68,19 @@ const App = () => {
         cardsData.filter((cardData) => removedCardData._id !== cardData._id)
     );
 
+    // Handle loading user and cards from API
+    const handleProfileLoad = (token) => {
+        setIsLoading(true);
+        Promise
+            .all([api.getUserInfo(token), api.getAllCards()])
+            .then(([userResponse, cardsResponse]) => {
+                setUserData(userResponse);
+                setCardsData(cardsResponse);
+            })
+            .catch(handleErrorResponse)
+            .finally(() => setIsLoading(false));
+    };
+
     // Handle an error response from the server
     const handleErrorResponse = (errorMessage) => {
         setErrorMessage(errorMessage);
@@ -86,26 +95,21 @@ const App = () => {
 
     // Handle register form submission
     const handleRegisterFormSubmit = (inputValues) => {
-        auth.register(inputValues)
+        api.register(inputValues)
             .then(() => {
                 setIsSuccessful(true);
-                setIsInfoTooltipPopupOpen(true);
                 history.push('/signin');
             })
-            .catch(() => {
-                setIsSuccessful(false);
-                setIsInfoTooltipPopupOpen(true);
-            });
+            .catch(() => setIsSuccessful(false))
+            .finally(() => setIsInfoTooltipPopupOpen(true));
     };
 
     // Handle login form submission
     const handleLoginFormSubmit = (inputValues) => {
-        auth.login(inputValues)
-            .then(() => {
-                setLoggedUser({
-                    email: inputValues.email
-                });
+        api.login(inputValues)
+            .then((response) => {
                 setIsLoggedIn(true);
+                handleProfileLoad(response.token);
                 history.push('/');
             })
             .catch(handleErrorResponse);
@@ -113,8 +117,9 @@ const App = () => {
 
     // Handle logout click
     const handleLogoutClick = () => {
-        auth.logout();
-        setLoggedUser({});
+        api.logout();
+        setUserData({});
+        setCardsData([]);
         setIsLoggedIn(false);
     }
 
@@ -228,32 +233,13 @@ const App = () => {
      * ----------------------------------------------------------------
      */
 
-    // Load data from API on mounting
-    React.useEffect(() => {
-        Promise
-            .all([api.getUserInfo(), api.getAllCards()])
-            .then(([userResponse, cardsResponse]) => {
-                setUserData(userResponse);
-                setCardsData(cardsResponse);
-                setIsLoading(false);
-            })
-            .catch(handleErrorResponse);
-    }, []);
-
-    // Authenticate and authorize returning users
     React.useEffect(() => {
         const token = localStorage.getItem('jwt');
 
-        if (token && !isLoggedIn) {
-            auth.checkToken(token)
-                .then((response) => {
-                    setLoggedUser({
-                        email: response.data.email
-                    });
-                    setIsLoggedIn(true);
-                    history.push('/');
-                })
-                .catch(handleErrorResponse);
+        if (token) {
+            setIsLoggedIn(true);
+            handleProfileLoad(token);
+            history.push('/');
         }
     }, []);
 
@@ -279,7 +265,7 @@ const App = () => {
 
                     <ProtectedRoute exact path="/" isLoggedIn={isLoggedIn}>
                         <Header isCollapsible={true}>
-                            <span className="header__text">{loggedUser.email}</span>
+                            <span className="header__text">{userData.email}</span>
 
                             <Link
                                 to="#"

@@ -17,10 +17,10 @@ const Card = ({cardData, onCardImageClick, onCardLikeClick, onCardRemoveClick}) 
     const userData = React.useContext(CurrentUserContext);
 
     // Represent whether the current user is the owner of the card
-    const isOwner = cardData.owner._id === userData._id;
+    const isOwner = cardData.owner === userData._id;
 
     // Represent whether the current user has liked the card
-    const isLiked = cardData.likes.some((likingUser) => likingUser._id === userData._id);
+    const isLiked = cardData.likes.includes(userData._id);
 
     // Event handlers
     const handleCardImageClick = () => onCardImageClick(cardData);
