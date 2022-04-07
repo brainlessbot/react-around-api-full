@@ -31,8 +31,6 @@ const errorHandler = (error, req, res, next) => {
     return;
   }
 
-  console.log(error);
-
   res.status(SERVER_ERROR).json({ message: 'An error has occurred on the server.' });
 };
 
