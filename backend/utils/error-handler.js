@@ -4,20 +4,25 @@ const IncorrectCredentialsError = require('../errors/IncorrectCredentialsError')
 const ResourceNotFoundError = require('../errors/ResourceNotFoundError');
 
 const INVALID_DATA = 400;
-const FORBIDDEN_USER = 403;
+const UNAUTHORIZED_USER = 401;
 const NOT_FOUND = 404;
 const SERVER_ERROR = 500;
 
 const { DocumentNotFoundError, ValidationError } = mongoose.Error;
 
 const errorHandler = (error, req, res, next) => {
+  if (error instanceof ValidationError) {
+    res.status(INVALID_DATA).json({ message: error.message });
+    return;
+  }
+
   if (error instanceof AuthorizationError) {
-    res.status(FORBIDDEN_USER).json({ message: 'Authorization error.' });
+    res.status(UNAUTHORIZED_USER).json({ message: 'Authorization error.' });
     return;
   }
 
   if (error instanceof IncorrectCredentialsError) {
-    res.status(INVALID_DATA).json({ message: 'Incorrect password or email.' });
+    res.status(UNAUTHORIZED_USER).json({ message: 'Incorrect password or email.' });
     return;
   }
 
@@ -26,10 +31,7 @@ const errorHandler = (error, req, res, next) => {
     return;
   }
 
-  if (error instanceof ValidationError) {
-    res.status(INVALID_DATA).json({ message: error.message });
-    return;
-  }
+  console.log(error);
 
   res.status(SERVER_ERROR).json({ message: 'An error has occurred on the server.' });
 };

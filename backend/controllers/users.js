@@ -35,7 +35,7 @@ const getMyself = (req, res, next) => {
 const getUser = (req, res, next) => {
   const { id } = req.params;
 
-  User.find({ _id: id })
+  User.findById(id)
     .orFail()
     .then((data) => res.json(data))
     .catch(next);
@@ -58,7 +58,7 @@ const createUser = (req, res, next) => {
       about,
       avatar,
     }))
-    .then((data) => res.status(201).json(data))
+    .then((data) => res.status(201).json({ _id: data._id }))
     .catch(next);
 };
 
