@@ -1,4 +1,4 @@
-const AuthorizationError = require('../errors/AuthorizationError');
+const ForbiddenError = require('../errors/ForbiddenError');
 const Card = require('../models/card');
 
 const getCards = (req, res, next) => {
@@ -23,7 +23,7 @@ const deleteCard = (req, res, next) => {
     .orFail()
     .then((data) => {
       if (!data.owner.equals(req.user._id)) {
-        throw new AuthorizationError();
+        throw new ForbiddenError();
       }
 
       return Card.findByIdAndDelete(id).orFail();

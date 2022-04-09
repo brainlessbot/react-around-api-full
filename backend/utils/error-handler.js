@@ -1,11 +1,8 @@
 const mongoose = require('mongoose');
-const AuthorizationError = require('../errors/AuthorizationError');
-const IncorrectCredentialsError = require('../errors/IncorrectCredentialsError');
-const ResourceNotFoundError = require('../errors/ResourceNotFoundError');
 
 const INVALID_DATA = 400;
-const UNAUTHORIZED_USER = 401;
 const NOT_FOUND = 404;
+const CONFLICT = 409;
 const SERVER_ERROR = 500;
 
 const { DocumentNotFoundError, ValidationError } = mongoose.Error;
@@ -16,22 +13,21 @@ const errorHandler = (error, req, res, next) => {
     return;
   }
 
-  if (error instanceof AuthorizationError) {
-    res.status(UNAUTHORIZED_USER).json({ message: 'Authorization error.' });
-    return;
-  }
-
-  if (error instanceof IncorrectCredentialsError) {
-    res.status(UNAUTHORIZED_USER).json({ message: 'Incorrect password or email.' });
-    return;
-  }
-
-  if (error instanceof ResourceNotFoundError || error instanceof DocumentNotFoundError) {
+  if (error instanceof DocumentNotFoundError) {
     res.status(NOT_FOUND).json({ message: 'Requested resource not found.' });
     return;
   }
 
-  res.status(SERVER_ERROR).json({ message: 'An error has occurred on the server.' });
+  if (error.name === 'MongoServerError' && error.code === 11000) {
+    res.status(CONFLICT).json({ message: 'Email address is already registered.' });
+    return;
+  }
+
+  const { statusCode = SERVER_ERROR, message } = error;
+
+  res.status(statusCode).json({
+    message: statusCode === SERVER_ERROR ? 'An error has occurred on the server.' : message,
+  });
 };
 
 module.exports = errorHandler;
